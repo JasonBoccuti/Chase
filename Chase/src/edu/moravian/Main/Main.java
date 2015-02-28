@@ -1,4 +1,4 @@
-package edu.moravain.Main;
+package edu.moravian.Main;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.SlickException;
 

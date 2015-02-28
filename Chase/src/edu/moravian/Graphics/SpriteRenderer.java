@@ -1,4 +1,4 @@
-package edu.moravain.Graphics;
+package edu.moravian.Graphics;
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;

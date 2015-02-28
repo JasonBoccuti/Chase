@@ -9,13 +9,13 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 
-import edu.moravain.Graphics.SpriteRenderer;
 import edu.moravian.Coordinate.CoordinateTranslator;
 import edu.moravian.Entity.Agent;
 import edu.moravian.Entity.Entity;
 import edu.moravian.Entity.Player;
 import edu.moravian.Entity.Prize;
 import edu.moravian.Geometry.Point2D;
+import edu.moravian.Graphics.SpriteRenderer;
 
 public class Game extends BasicGame 
 {
