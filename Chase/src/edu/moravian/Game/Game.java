@@ -66,7 +66,7 @@ public class Game extends BasicGame
 		tileMapHeight = map.getWorldHeight();
 		playerScreenLoc = new Point(0, 0);
 		lowerLeftCorner = new Point2D(0, 0);
-		playerWorldLoc = new Point2D(0, 0);
+		playerWorldLoc = new Point2D(800, 800);
 		agentWorldLoc = new Point2D(-1,-1);
 		prizeWorldLoc = new Point2D(0, 0);
 	    // List of all entities
@@ -154,14 +154,19 @@ public class Game extends BasicGame
 		lowerLeftCorner.setX(playerWorldLoc.getX() - (screenWidth/2));
 		lowerLeftCorner.setY(playerWorldLoc.getY() - (screenHeight/2));
 		
-		System.out.println(playerWorldLoc.getX());
-		System.out.println(playerWorldLoc.getY());
 		
 		//coordTran = new CoordinateTranslator(worldWidth, worldHeight, lowerLeftCorner.getX(), lowerLeftCorner.getY(), screenWidth, screenHeight);
 		cct = new ColemanCoordinateTranslator(worldWidth, worldHeight, lowerLeftCorner, screenWidth, screenHeight);
 		
-		//playerScreenLoc = coordTran.worldToScreen(playerWorldLoc);
+//		playerScreenLoc = coordTran.worldToScreen(playerWorldLoc);
 		playerScreenLoc = cct.worldToScreen(playerWorldLoc);
+		
+		System.out.println("playerWorldX: " + playerWorldLoc.getX());
+		System.out.println("playerWorldY: " + playerWorldLoc.getY());
+		System.out.println("lowerLeftX: " + lowerLeftCorner.getX());
+		System.out.println("lowerLeftY: " + lowerLeftCorner.getY());
+		System.out.println("playerScreenX: " + playerScreenLoc.getX());
+		System.out.println("playerScreenY: " + playerScreenLoc.getY());
 		
 		player.giveNewPosition(playerScreenLoc);
 		agent.givePlayerPosition(playerScreenLoc);
