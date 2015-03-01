@@ -9,6 +9,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 
+import edu.moravian.Coordinate.ColemanCoordinateTranslator;
 import edu.moravian.Coordinate.CoordinateTranslator;
 import edu.moravian.Entity.Agent;
 import edu.moravian.Entity.Entity;
@@ -20,17 +21,22 @@ import edu.moravian.Graphics.SpriteRenderer;
 public class Game extends BasicGame 
 {
 	private CoordinateTranslator coordTran;
+	private ColemanCoordinateTranslator cct;
 	private Boolean exit, goUp, goDown, goLeft, goRight, playSound;
 	private Point2D lowerLeftCorner;
 	private Point2D playerWorldLoc;
+	private Point playerScreenLoc;
 	private Point2D agentWorldLoc;
 	private Point2D prizeWorldLoc;
 	private GameMap map;
 	private GameSoundManager gsm;
 	private int screenWidth, screenHeight;
-	private final double worldWidth = 1000; // meters
-	private final double worldHeight = 1000; // meters
-	private final double velocity = 1.38582; // meters/second (average walking pace of a human)
+	private double tileMapWidth;
+	private double tileMapHeight;
+	private final double worldWidth = 1920; // meters
+	private final double worldHeight = 1440; // meters
+	private final double velocity = 1.38582; // meters/second (Average walking pace of a Human Being)
+	
 	
 	// Entity
 	private ArrayList<Entity> ents;
@@ -56,11 +62,13 @@ public class Game extends BasicGame
 	@Override
 	public void init(GameContainer gc) throws SlickException {
 		map = new GameMap(screenWidth, screenHeight);
+		tileMapWidth = map.getWorldWidth();
+		tileMapHeight = map.getWorldHeight();
+		playerScreenLoc = new Point(0, 0);
 		lowerLeftCorner = new Point2D(0, 0);
 		playerWorldLoc = new Point2D(0, 0);
 		agentWorldLoc = new Point2D(-1,-1);
 		prizeWorldLoc = new Point2D(0, 0);
-		
 	    // List of all entities
 	    ents = new ArrayList<Entity>();
 	    ents.add(player = new Player(screenWidth, screenHeight));
@@ -72,9 +80,6 @@ public class Game extends BasicGame
 	    
 	    gsm = new GameSoundManager();
 	    gsm.playNextSong();
-	    
-	    // Create a Coordinate Translator starting with wllx/wlly being in the bottom left of the world
-	    coordTran = new CoordinateTranslator(worldWidth, worldHeight, 0, 0, screenWidth, screenHeight);
 	}
 
 	@Override
@@ -106,26 +111,39 @@ public class Game extends BasicGame
 		}
 		if(goLeft) {
 			double temp = playerWorldLoc.getX();
-			playerWorldLoc.setX(temp -= (velocity*delta)/2);
+			playerWorldLoc.setX(temp -= (velocity*delta));
+			if (playerWorldLoc.getX() < 0) {
+				playerWorldLoc.setX(0);
+			}
 			player.setState("left");
 			agent.setState("left");
 			
 		}
 		else if(goRight) { 
 			double temp = playerWorldLoc.getX();
-			playerWorldLoc.setX(temp += (velocity*delta)/2);
+			playerWorldLoc.setX(temp += (velocity*delta));
+			if (playerWorldLoc.getX() > worldWidth) {
+				playerWorldLoc.setX(worldWidth);
+			}
+			System.out.println("Velocity: " + velocity + ", delta: " + delta + ", playerX: " + playerWorldLoc.getX());
 			player.setState("right");
 			agent.setState("right");
 		}
 		else if(goUp) {
 			double temp = playerWorldLoc.getY();
-			playerWorldLoc.setY(temp += (velocity*delta)/2);
+			playerWorldLoc.setY(temp += (velocity*delta));
+			if (playerWorldLoc.getY() > worldHeight) {
+				playerWorldLoc.setY(worldHeight);
+			}
 			player.setState("up");
 			agent.setState("up");
 		}
 		else if(goDown) {
 			double temp = playerWorldLoc.getY();
-			playerWorldLoc.setY(temp -= (velocity*delta)/2);
+			playerWorldLoc.setY(temp -= (velocity*delta));
+			if (playerWorldLoc.getY() < 0) {
+				playerWorldLoc.setY(0);
+			}
 			player.setState("down");
 			agent.setState("down");
 		}
@@ -133,10 +151,17 @@ public class Game extends BasicGame
 			player.setState("still");
 		}
 		
-		coordTran.setViewedWllx(playerWorldLoc.getX() - (screenWidth/2));
-		coordTran.setViewedWlly(playerWorldLoc.getY() - (screenHeight/2));
-		Point playerScreenLoc = new Point();
-		playerScreenLoc = coordTran.worldToScreen(playerWorldLoc);
+		lowerLeftCorner.setX(playerWorldLoc.getX() - (screenWidth/2));
+		lowerLeftCorner.setY(playerWorldLoc.getY() - (screenHeight/2));
+		
+		System.out.println(playerWorldLoc.getX());
+		System.out.println(playerWorldLoc.getY());
+		
+		//coordTran = new CoordinateTranslator(worldWidth, worldHeight, lowerLeftCorner.getX(), lowerLeftCorner.getY(), screenWidth, screenHeight);
+		cct = new ColemanCoordinateTranslator(worldWidth, worldHeight, lowerLeftCorner, screenWidth, screenHeight);
+		
+		//playerScreenLoc = coordTran.worldToScreen(playerWorldLoc);
+		playerScreenLoc = cct.worldToScreen(playerWorldLoc);
 		
 		player.giveNewPosition(playerScreenLoc);
 		agent.givePlayerPosition(playerScreenLoc);
@@ -144,9 +169,6 @@ public class Game extends BasicGame
 		for (Entity e : ents) {
 			e.update(delta);
 		}
-		
-		lowerLeftCorner.setX(playerWorldLoc.getX() - screenWidth/2);
-		lowerLeftCorner.setY(playerWorldLoc.getY() - screenHeight/2);
 		
 	}
 	
@@ -158,6 +180,10 @@ public class Game extends BasicGame
 		/*if(key == Input.KEY_SPACE) {
 			playSound = true;
 		}*/
+		if(c == 'g' || c == 'G') {
+			System.out.println("Player World X: " + playerWorldLoc.getX() + ", Player World Y: " + playerWorldLoc.getY());
+			System.out.println("Player Screen X: " + playerScreenLoc.getX() + ", Player Screen Y: " + playerScreenLoc.getY());
+		}
         if(c == 'w' || c == 'W' || key == Input.KEY_UP) {
             goUp = true;
         }

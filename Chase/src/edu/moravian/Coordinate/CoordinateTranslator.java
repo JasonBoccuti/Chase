@@ -21,14 +21,6 @@ public class CoordinateTranslator {
 		this.screenWidth = screenWidth;	
 	}
 	
-	public void setViewedWllx(double x) {
-		viewedWllx = x;
-	}
-	
-	public void setViewedWlly(double y) {
-		viewedWlly = y;
-	}
-	
 	public Point2D screenToWorld(int sx, int sy) {
 		Point2D worldPoint = new Point2D();
 		

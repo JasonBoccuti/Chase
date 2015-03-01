@@ -39,16 +39,16 @@ public class GameMap {
 		
 		// How many tiles we need to render from the starting tile to cover at least the whole screen width/height
 		dsx = (screenWidth/tileWidth) + 2;
-		dsy = (screenHeight/tileWidth) + 2;
+		dsy = (screenHeight/tileHeight) + 2;
 		
 		map.render(plotX, plotY, sx, sy, dsx, dsy);
 	}
 	
 	public double getWorldWidth() {
-		return map.getWidth();
+		return map.getWidth()*tileWidth;
 	}
 	
 	public double getWorldHeight() {
-		return map.getHeight();
+		return map.getHeight()*tileHeight;
 	}
 }
